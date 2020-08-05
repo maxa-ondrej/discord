@@ -1,0 +1,32 @@
+{
+    "name": "maxa-ondrej/discord",
+    "description": "Discord extension for Nette.",
+    "type": "library",
+    "minimum-stability": "stable",
+    "license": "GPL-3.0-only",
+    "authors": [
+        {
+            "name": "Ondřej Maxa",
+            "homepage": "http://ondrej.maxa.expert",
+            "email": "ondrej@maxa.expert"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Maxa\\Ondrej\\Discord\\": "src/"
+        }
+    },
+    "require": {
+        "php": "^7.4"
+
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-master"
+    },
+    "config": {
+        "platform": {
+            "php": "7.4"
+        },
+        "sort-packages": true
+    }
+}

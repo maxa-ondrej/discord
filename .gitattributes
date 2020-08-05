@@ -1,0 +1,6 @@
+# GIT
+.gitignore export-ignore
+.gitattributes export-ignore
+
+# COMPOSER
+composer.lock export-ignore
