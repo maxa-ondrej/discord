@@ -2,7 +2,7 @@
     "name": "maxa-ondrej/discord",
     "description": "Discord extension for Nette.",
     "type": "library",
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "license": "GPL-3.0-only",
     "authors": [
         {
@@ -17,8 +17,10 @@
         }
     },
     "require": {
-        "php": "^7.4"
-
+        "php": "^7.4",
+        "nette/di": "^3.0",
+        "psecio/oauth2-discord": "dev-master",
+        "restcord/restcord": "^0.4.0"
     },
     "require-dev": {
         "roave/security-advisories": "dev-master"
