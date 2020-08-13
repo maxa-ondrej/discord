@@ -42,17 +42,19 @@ class ClientFactory
 	 *
 	 * @param string $token
 	 * @param string $tokenType
-	 * @return DiscordClient
+	 * @return Client
 	 */
-	public function create(string $token = null, string $tokenType = null): DiscordClient
+	public function create(string $token = null, string $tokenType = null): Client
 	{
-		return new DiscordClient([
+		return new Client(
+			new DiscordClient([
             'token' => $token ?: $this->token,
             'version' => $this->version,
             'logger' => $this->logger,
             'throwOnRatelimit' => $this->throwOnRatelimit,
             'apiUrl' => $this->apiUrl,
             'tokenType' => $tokenType ?: $this->tokenType,
-        ]);
+			])
+		);
 	}
 }
