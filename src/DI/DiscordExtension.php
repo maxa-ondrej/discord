@@ -2,6 +2,7 @@
 
 namespace Maxa\Ondrej\Discord\DI;
 
+use Maxa\Ondrej\Discord\ClientFactory;
 use Nette\Schema\Expect;
 use Nette\DI\CompilerExtension;
 use Nette\Schema\Schema;
@@ -59,6 +60,10 @@ class DiscordExtension extends CompilerExtension
 				'apiUrl' => $this->config->apiUrl,
 				'tokenType' => $this->config->tokenType,
 			]
+		]);
+		$builder->addDefinition($this->prefix('messageParserFactory'))
+			->setFactory(MessageParserFactory::class, [
+				$this->prefix('clientFactory')
 		]);
 	}
 }
