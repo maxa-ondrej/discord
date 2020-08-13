@@ -6,8 +6,9 @@ use Nette\Schema\Expect;
 use Nette\DI\CompilerExtension;
 use Nette\Schema\Schema;
 
-use League\OAuth2\Client\Provider\Discord;
-use Maxa\Ondrej\Discord\Logger;
+use Maxa\Ondrej\Discord\ProviderFactory;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 use RestCord\DiscordClient;
 
 class DiscordExtension extends CompilerExtension
@@ -16,45 +17,48 @@ class DiscordExtension extends CompilerExtension
 	{
 		return Expect::structure([
 			'token' => Expect::string(),
-			'guild' => Expect::structure([
-				'id' => Expect::int(),
-                'logger' => Expect::structure([
-                    'channel' => Expect::int(),
-                    'role' => Expect::int(),
-                ]),
-            ]),
+			'version' => Expect::string()->default('1.0.0'),
+			'logDir' => Expect::string(),
+			'throwOnRatelimit' => Expect::bool()->default(false),
+			'apiUrl' => Expect::string()->default('https://discordapp.com/api/v6'),
+			'tokeType' => Expect::string()->default('Bot'),
+			'guild' => Expect::int(),
 			'client' => Expect::structure([
 				'id' => Expect::int(),
 				'secret' => Expect::string(),
-            ]),
-			'permissions' => Expect::arrayOf('string'),
-			'redirect' => Expect::string(),
+			])
 		]);
 	}
 
 	public function loadConfiguration()
 	{
 		$builder = $this->getContainerBuilder();
-		$builder->addDefinition($this->prefix('provider'))
-			->setFactory(Discord::class, [[
+		$builder->addDefinition($this->prefix('providerFactory'))
+			->setFactory(ProviderFactory::class, [
 				'clientId' => $this->config->client->id,
-				'clientSecret' => $this->config->client->secret,
-				'redirectUri' => $this->config->redirect,
-				'scope' => implode(' ', $this->config->permissions)
-				]]);
-		$builder->addDefinition($this->prefix('client'))
-			->setFactory(DiscordClient::class, [[
-				'token' => $this->config->token
-        ]]);
-		$builder->addDefinition($this->prefix('channel'))
-			->setFactory(Logger::class, [
-                '@discord.client',
-                $this->guild->logger->channel
-        ]);
+				'clientSecret' => $this->config->client->secret
+		]);
+		$builder->addDefinition($this->prefix('streamHandler'))
+			->setFactory(StreamHandler::class, [[
+				$this->config->logDir . '/discord.log',
+				Logger::INFO
+		]]);
 		$builder->addDefinition($this->prefix('logger'))
 			->setFactory(Logger::class, [
-                '@discord.channel',
-                $this->guild->logger->role
-        ]);
+				'discord'
+			])
+			->addSetup('pushHandler', [
+				$this->prefix('streamHandler')
+		]);
+		$builder->addDefinition($this->prefix('clientFactory'))
+			->setFactory(DiscordClient::class, [[
+				'token' => $this->config->token,
+				'version' => $this->config->version,
+				'logger' => $this->prefix('logger'),
+				'throwOnRatelimit' => $this->config->throwOnRatelimit,
+				'apiUrl' => $this->config->apiUrl,
+				'tokenType' => $this->config->tokenType,
+			]
+		]);
 	}
 }
