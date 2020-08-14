@@ -2,7 +2,7 @@
 
 namespace Maxa\Ondrej\Discord\DI;
 
-use Maxa\Ondrej\Discord\ClientFactory;
+use Maxa\Ondrej\Discord\MessageParserFactory;
 use Nette\Schema\Expect;
 use Nette\DI\CompilerExtension;
 use Nette\Schema\Schema;
@@ -22,7 +22,7 @@ class DiscordExtension extends CompilerExtension
 			'logDir' => Expect::string(),
 			'throwOnRatelimit' => Expect::bool()->default(false),
 			'apiUrl' => Expect::string()->default('https://discordapp.com/api/v6'),
-			'tokeType' => Expect::string()->default('Bot'),
+			'tokenType' => Expect::string()->default('Bot'),
 			'guild' => Expect::int(),
 			'client' => Expect::structure([
 				'id' => Expect::int(),
