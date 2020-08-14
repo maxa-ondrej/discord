@@ -9,10 +9,12 @@ use RestCord\Model\Emoji\Emoji;
 
 class Client {
 	protected DiscordClient $discordClient;
+	protected int $guildId;
 
-	public function __construct(DiscordClient $discordClient)
+	public function __construct(DiscordClient $discordClient, int $guildId)
 	{
 		$this->discordClient = $discordClient;
+		$this->guildId = $guildId;
 	}
 
 	public function getGuildMember(int $userId)
@@ -78,10 +80,10 @@ class Client {
      * @param SendMessage $message
      * @return Message
      */
-	public function sendChannelMessage(int $channel, SendMessage $message): Message
+	public function sendChannelMessage(int $channel, SendMessage $message): array
 	{
         $messageArray = $message->asArray();
         $messageArray['channel.id'] = $channel;
-		return $this->discordClient->channel->createChannelMessage($messageArray);
+		return $this->discordClient->channel->createMessage($messageArray);
 	}
 }
