@@ -49,7 +49,6 @@ class ClientFactory
 		return new Client(
 			new DiscordClient([
             'token' => $token ?: $this->token,
-            'version' => $this->version,
             'logger' => $this->logger,
             'throwOnRatelimit' => $this->throwOnRatelimit,
             'apiUrl' => $this->apiUrl,
