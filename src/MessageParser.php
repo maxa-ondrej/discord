@@ -55,7 +55,7 @@ class MessageParser
 	 */
 	public function parseUserMentions(): void
 	{
-		preg_match_all("/&lt;@!(\d{18})&gt;/", $this->content, $mentions, PREG_SET_ORDER);
+		preg_match_all("/&lt;@!?(\d{18})&gt;/", $this->content, $mentions, PREG_SET_ORDER);
 		foreach($mentions as $mention) {
 			try {
 				$member = $this->client->getGuildMember($mention[1]);
@@ -69,11 +69,7 @@ class MessageParser
 			}
 			$el = Html::el('a');
 			$el->class = 'btn btn-link user';
-			if (isset($member) && !is_null($member->nick)) {
-				$el[] = '@'.$member->nick;
-			} else {
-				$el[] = '@'.$user->username;
-			}			
+			$el[] = '@'.(isset($member) && !is_null($member->nick) ? $member->nick : $user->username);		
 			$el->title = $member->user->username . '#' . $member->user->discriminator;
 			$this->content = str_replace($mention[0], $el, $this->content);
 		}
