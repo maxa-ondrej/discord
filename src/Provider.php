@@ -46,4 +46,12 @@ class Provider extends Discord
             throw new DiscordRequestException("Error in response from Discord: $data[error]");
         }
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getDefaultScopes()
+    {
+        return ['identify', 'email', 'guilds'];
+    }
 }
