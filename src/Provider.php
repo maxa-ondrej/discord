@@ -3,6 +3,9 @@
 namespace Maxa\Ondrej\Discord;
 
 use Discord\OAuth\Discord;
+use Discord\OAuth\DiscordRequestException;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 use League\OAuth2\Client\Token\AccessToken;
 use Psr\Http\Message\ResponseInterface;
 
@@ -28,15 +31,19 @@ class Provider extends Discord
      * @param AccessToken $token
      * @return ResponseInterface
      */
-    public function revokeToken(string $token): ResponseInterface
+    public function revokeToken(string $token): void
     {
-        $request = $this->getRequest('post', $this->getRevokeTokenUrl(), [
+        $client = new Client; 
+        $response = $client->post($this->getRevokeTokenUrl(), [
             'form_params' => [
                 'client_id' => $this->clientId,
                 'client_secret' => $this->clientSecret,
                 'token' => $token,
             ]
         ]);
-        return $this->getResponse($request);
+        if ($response->getStatusCode() !== 200) {
+            $data = json_decode($response->getBody(), true);
+            throw new DiscordRequestException("Error in response from Discord: $data[error]");
+        }
     }
 }
