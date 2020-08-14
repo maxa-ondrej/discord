@@ -28,13 +28,13 @@ class Provider extends Discord
      * @param AccessToken $token
      * @return ResponseInterface
      */
-    public function revokeToken(AccessToken $token): ResponseInterface
+    public function revokeToken(string $token): ResponseInterface
     {
         $request = $this->getRequest('post', $this->getRevokeTokenUrl(), [
             'form_params' => [
                 'client_id' => $this->clientId,
                 'client_secret' => $this->clientSecret,
-                'token' => $token->getToken(),
+                'token' => $token,
             ]
         ]);
         return $this->getResponse($request);
