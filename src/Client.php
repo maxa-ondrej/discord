@@ -2,10 +2,13 @@
 
 namespace Maxa\Ondrej\Discord;
 
+use InvalidArgumentException;
 use Maxa\Ondrej\Discord\Message\Message as SendMessage;
 use RestCord\DiscordClient;
+use RestCord\Model\Channel\Channel;
 use RestCord\Model\Channel\Message;
 use RestCord\Model\Emoji\Emoji;
+use RestCord\Model\Guild\Role;
 
 class Client {
 	protected DiscordClient $discordClient;
@@ -44,11 +47,30 @@ class Client {
 		]);
 	}
 
+	public function getRole(int $id): Role
+	{
+		foreach ($this->getAllRoles as $role) {
+			if($role->id == $id) {
+				return $role;
+			}
+		}
+		throw new InvalidArgumentException("Role not found.", 404);
+	}
+
 	public function getAllRoles()
 	{
 		return $this->discordClient->guild->getGuildRoles(
 			[
 				'guild.id' => $this->guildId
+			]
+		);
+	}
+
+	public function getChannel(int $id): Channel
+	{
+		return $this->discordClient->channel->getChannel(
+			[
+				'channel.id' => $id,
 			]
 		);
 	}

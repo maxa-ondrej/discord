@@ -3,7 +3,9 @@
 namespace Maxa\Ondrej\Discord;
 
 use GuzzleHttp\Command\Exception\CommandClientException;
+use InvalidArgumentException;
 use Nette\Utils\Html;
+use stdClass;
 
 /**
  * Parses Discord Messages
@@ -45,6 +47,8 @@ class MessageParser
 		$this->content = htmlentities($this->content);
 		$this->content = str_replace('<br />', self::NEW_LINE, nl2br($this->content));
 		$this->parseUserMentions();
+		$this->parseChannelMentions();
+		$this->parseRoleMentions();
 		$this->parseEmojis();
 		$this->parseFormat();
 		$this->removeBrTagsFromPre();
@@ -68,9 +72,59 @@ class MessageParser
 				}
 			}
 			$el = Html::el('a');
-			$el->class = 'btn btn-link user';
+			$el->class = 'btn btn-link mention';
 			$el[] = '@'.(isset($member) && !is_null($member->nick) ? $member->nick : $user->username);		
 			$el->title = $member->user->username . '#' . $member->user->discriminator;
+			$this->content = str_replace($mention[0], $el, $this->content);
+		}
+	}
+
+	/**
+	 * Replaces <@!{$id}> with {$username}#{$discriminator}
+	 */
+	public function parseChannelMentions(): void
+	{
+		preg_match_all("/&lt;#(\d{18})&gt;/", $this->content, $mentions, PREG_SET_ORDER);
+		foreach($mentions as $mention) {
+			try {
+				$channel = $this->client->getChannel($mention[1]);
+			} catch (CommandClientException $e) {
+				if($e->getResponse()->getStatusCode() === 404) {
+					$channel = new stdClass();
+					$channel->name = 'deleted-channel';
+				} else {
+					throw $e;
+				}
+			}
+			$el = Html::el('a');
+			$el->class = 'btn btn-link mention';
+			$el[] = "#{$channel->name}";		
+			$el->title = $mention[1];
+			$this->content = str_replace($mention[0], $el, $this->content);
+		}
+	}
+
+	/**
+	 * Replaces <@!{$id}> with {$username}#{$discriminator}
+	 */
+	public function parseRoleMentions(): void
+	{
+		preg_match_all("/&lt;@&(\d{18})&gt;/", $this->content, $mentions, PREG_SET_ORDER);
+		foreach($mentions as $mention) {
+			try {
+				$role = $this->client->getRole($mention[1]);
+			} catch (InvalidArgumentException $e) {
+				if ($e->getCode() === 404) {
+					$role = new stdClass();
+					$role->name = 'deleted-role';
+				} else {
+					throw $e;
+				}
+			}
+			$el = Html::el('a');
+			$el->class = 'btn btn-link mention';
+			$el[] = "#{$role->name}";		
+			$el->title = $mention[1];
 			$this->content = str_replace($mention[0], $el, $this->content);
 		}
 	}
