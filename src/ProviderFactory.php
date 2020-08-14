@@ -8,17 +8,17 @@ namespace Maxa\Ondrej\Discord;
  */
 class ProviderFactory
 {
-	private string $clientId;
+	private int $clientId;
 	private string $clientSecret;
 
 	/**
 	 * Factory constructor
 	 *
-	 * @param string $clientId
+	 * @param int $clientId
 	 * @param string $clientSecret
 	 * @param array $permissions
 	 */
-	public function __construct(string $clientId, string $clientSecret) {
+	public function __construct(int $clientId, string $clientSecret) {
 		$this->clientId = $clientId;
 		$this->clientSecret = $clientSecret;
 	}
