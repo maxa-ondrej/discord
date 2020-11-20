@@ -1,8 +1,8 @@
 <?php
 
-namespace Maxa\Ondrej\Discord\Message;
+namespace Majksa\Discord\Message;
 
-use Maxa\Ondrej\Discord\Collection\CollectionObject;
+use Majksa\Discord\Collection\CollectionObject;
 
 class Footer extends CollectionObject {
     public string $text;

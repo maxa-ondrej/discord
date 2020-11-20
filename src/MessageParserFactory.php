@@ -1,6 +1,6 @@
 <?php
 
-namespace Maxa\Ondrej\Discord;
+namespace Majksa\Discord;
 
 /**
  * Parses Discord Messages

@@ -1,8 +1,8 @@
 <?php
 
-namespace Maxa\Ondrej\Discord\Collection;
+namespace Majksa\Discord\Collection;
 
-abstract class CollectionObject implements Collectable {
+class CollectionObject implements Collectable {
 	/**
 	 * Converts CollectionObject into an array
 	 *

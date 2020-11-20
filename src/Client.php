@@ -1,9 +1,9 @@
 <?php
 
-namespace Maxa\Ondrej\Discord;
+namespace Majksa\Discord;
 
 use InvalidArgumentException;
-use Maxa\Ondrej\Discord\Message\Message as SendMessage;
+use Majksa\Discord\Message\Message as SendMessage;
 use RestCord\DiscordClient;
 use RestCord\Model\Channel\Channel;
 use RestCord\Model\Channel\Message;

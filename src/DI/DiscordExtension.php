@@ -1,14 +1,14 @@
 <?php
 
-namespace Maxa\Ondrej\Discord\DI;
+namespace Majksa\Discord\DI;
 
-use Maxa\Ondrej\Discord\ClientFactory;
-use Maxa\Ondrej\Discord\MessageParserFactory;
+use Majksa\Discord\ClientFactory;
+use Majksa\Discord\MessageParserFactory;
 use Nette\Schema\Expect;
 use Nette\DI\CompilerExtension;
 use Nette\Schema\Schema;
 
-use Maxa\Ondrej\Discord\ProviderFactory;
+use Majksa\Discord\ProviderFactory;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use RestCord\DiscordClient;
@@ -19,7 +19,7 @@ class DiscordExtension extends CompilerExtension
 	{
 		return Expect::structure([
 			'token' => Expect::string(),
-			'logDir' => Expect::string(),
+			'logger' => Expect::string(),
 			'throwOnRatelimit' => Expect::bool()->default(false),
 			'apiUrl' => Expect::string()->default('https://discordapp.com/api/v6'),
 			'tokenType' => Expect::string()->default('Bot'),
@@ -39,22 +39,10 @@ class DiscordExtension extends CompilerExtension
 				'clientId' => $this->config->client->id,
 				'clientSecret' => $this->config->client->secret
 		]);
-		$builder->addDefinition($this->prefix('streamHandler'))
-			->setFactory(StreamHandler::class, [
-				$this->config->logDir . '/discord.log',
-				Logger::INFO
-		]);
-		$builder->addDefinition($this->prefix('logger'))
-			->setFactory(Logger::class, [
-				'discord'
-			])
-			->addSetup('pushHandler', [
-				'@'.$this->prefix('streamHandler')
-		]);
 		$builder->addDefinition($this->prefix('clientFactory'))
 			->setFactory(ClientFactory::class, [
 				$this->config->token,
-				'@'.$this->prefix('logger'),
+                $this->config->logger,
 				$this->config->throwOnRatelimit,
 				$this->config->apiUrl,
 				$this->config->tokenType,

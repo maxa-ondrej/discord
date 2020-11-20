@@ -1,6 +1,6 @@
 <?php
 
-namespace Maxa\Ondrej\Discord\Collection;
+namespace Majksa\Discord\Collection;
 
 interface Collectable {
 	public function asArray(): array;

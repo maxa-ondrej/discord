@@ -1,11 +1,12 @@
 <?php
 
-namespace Maxa\Ondrej\Discord;
+namespace Majksa\Discord;
 
 use Discord\OAuth\Discord;
 use Discord\OAuth\DiscordRequestException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use League\OAuth2\Client\Provider\GenericProvider;
 use League\OAuth2\Client\Token\AccessToken;
 use Psr\Http\Message\ResponseInterface;
 
@@ -13,7 +14,7 @@ use Psr\Http\Message\ResponseInterface;
 /**
  * Service provider.
  */
-class Provider extends Discord
+class Provider extends GenericProvider
 {
     /**
      * Gets url for revoking access token.
@@ -28,8 +29,9 @@ class Provider extends Discord
     /**
      * Revokes token
      *
-     * @param AccessToken $token
-     * @return ResponseInterface
+     * @param string $token
+     * @return void
+     * @throws DiscordRequestException
      */
     public function revokeToken(string $token): void
     {
@@ -50,7 +52,7 @@ class Provider extends Discord
     /**
      * {@inheritdoc}
      */
-    protected function getDefaultScopes()
+    public function getDefaultScopes()
     {
         return ['identify', 'email', 'guilds'];
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Maxa\Ondrej\Discord;
+namespace Majksa\Discord;
 
 
 /**
@@ -11,13 +11,12 @@ class ProviderFactory
 	private int $clientId;
 	private string $clientSecret;
 
-	/**
-	 * Factory constructor
-	 *
-	 * @param int $clientId
-	 * @param string $clientSecret
-	 * @param array $permissions
-	 */
+    /**
+     * Factory constructor
+     *
+     * @param int $clientId
+     * @param string $clientSecret
+     */
 	public function __construct(int $clientId, string $clientSecret) {
 		$this->clientId = $clientId;
 		$this->clientSecret = $clientSecret;

@@ -1,9 +1,9 @@
 <?php
 
-namespace Maxa\Ondrej\Discord\Message;
+namespace Majksa\Discord\Message;
 
-use Maxa\Ondrej\Discord\Collection\ArrayObject;
-use Maxa\Ondrej\Discord\Collection\CollectionObject;
+use Majksa\Discord\Collection\ArrayObject;
+use Majksa\Discord\Collection\CollectionObject;
 
 class Embed extends CollectionObject {
     public ?string $title;

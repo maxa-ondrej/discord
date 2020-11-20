@@ -1,10 +1,10 @@
 <?php
 
-namespace Maxa\Ondrej\Discord\Collection;
+namespace Majksa\Discord\Collection;
 
 use InvalidArgumentException;
 
-abstract class ArrayObject implements Collectable {
+class ArrayObject implements Collectable {
 	protected array $array = [];
 	protected string $type;
 	

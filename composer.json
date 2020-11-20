@@ -1,5 +1,5 @@
 {
-    "name": "maxa-ondrej/discord",
+    "name": "majksa/discord",
     "description": "Discord extension for Nette.",
     "type": "library",
     "minimum-stability": "stable",
@@ -11,14 +11,15 @@
     }],
     "autoload": {
         "psr-4": {
-            "Maxa\\Ondrej\\Discord\\": "src/"
+            "Majksa\\Discord\\": "src/"
         }
     },
     "require": {
         "php": "^7.4",
         "nette/di": "^3.0",
         "restcord/restcord": "^0.4.0",
-        "team-reflex/oauth2-discord": "^1.0"
+        "league/oauth2-client": "^2.6.0",
+        "ext-json": "*"
     },
     "require-dev": {
         "roave/security-advisories": "dev-master"

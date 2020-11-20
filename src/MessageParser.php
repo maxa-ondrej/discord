@@ -1,6 +1,6 @@
 <?php
 
-namespace Maxa\Ondrej\Discord;
+namespace Majksa\Discord;
 
 use GuzzleHttp\Command\Exception\CommandClientException;
 use InvalidArgumentException;

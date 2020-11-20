@@ -1,4 +1,6 @@
 ### Composer
 /vendor/
+composer.phar
 
 /.vscode
+/.idea

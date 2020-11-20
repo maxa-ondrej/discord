@@ -1,9 +1,9 @@
 <?php
 
-namespace Maxa\Ondrej\Discord\Message;
+namespace Majksa\Discord\Message;
 
-use Maxa\Ondrej\Discord\Collection\CollectionObject;
-use Maxa\Ondrej\Discord\Collection\ArrayObject;
+use Majksa\Discord\Collection\CollectionObject;
+use Majksa\Discord\Collection\ArrayObject;
 
 class AllowedMentions extends CollectionObject {
     public ArrayObject $parse;
