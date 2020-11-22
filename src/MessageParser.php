@@ -3,8 +3,8 @@
 namespace Majksa\Discord;
 
 use GuzzleHttp\Command\Exception\CommandClientException;
-use InvalidArgumentException;
 use Nette\Utils\Html;
+use RestCord\DiscordClient;
 use stdClass;
 
 /**
@@ -12,7 +12,6 @@ use stdClass;
  */
 class MessageParser
 {
-	public string $content;
 	public const FORMAT_REGEXS = [
 		'multiline' => [
 			'/```(?:.*'.self::NEW_LINE.'?'.self::NEW_LINE_CHAR.'?)?([^`]+)```/' => '<pre><code>$1</code></pre>',
@@ -22,7 +21,7 @@ class MessageParser
 			'/\*\*([^\*]+)\*\*/' => '<b>$1</b>',
 			'/\*([^\*]+)\*/' => '<i>$1</i>',
 			'/__([^\*]+)__/' => '<u>$1</u>',
-			'/~~([^\*]+)~~/' => '<strike>$1</strike>',
+			'/~~([^\*]+)~~/' => '<s>$1</s>',
 			'/`([^`]+)`/' => '<code>$1</code>',
 		]
     ];
@@ -31,11 +30,22 @@ class MessageParser
 	public const NEW_LINE_CHAR = '
 	';
 
-	private Client $client;
+    /**
+     * @var string
+     */
+    public string $content;
+    /**
+     * @var int
+     */
+	private int $guildId;
+    /**
+     * @var DiscordClient
+     */
+	private DiscordClient $client;
 
-
-	public function __construct(string $content, Client $client) {
+	public function __construct(string $content, int $guildId, DiscordClient $client) {
 		$this->content = $content;
+		$this->guildId = $guildId;
 		$this->client = $client;
 	}
 
@@ -62,11 +72,16 @@ class MessageParser
 		preg_match_all("/&lt;@!?(\d{18})&gt;/", $this->content, $mentions, PREG_SET_ORDER);
 		foreach($mentions as $mention) {
 			try {
-				$member = $this->client->getGuildMember($mention[1]);
+				$member = $this->client->guild->getGuildMember([
+                    'guild.id' => $this->guildId,
+                    'user.id' => $mention[1],
+                ]);
 				$user = $member->user;
 			} catch (CommandClientException $e) {
 				if($e->getResponse()->getStatusCode() === 404) {
-					$user = $this->client->getUser($mention[1]);
+					$user = $this->client->user->getUser([
+                        'user.id' => $mention[1],
+                    ]);
 				} else {
 					throw $e;
 				}
@@ -74,7 +89,7 @@ class MessageParser
 			$el = Html::el('a');
 			$el->class = 'btn btn-link mention';
 			$el[] = '@'.(isset($member) && !is_null($member->nick) ? $member->nick : $user->username);		
-			$el->title = $member->user->username . '#' . $member->user->discriminator;
+			$el->title = $user->username . '#' . $user->discriminator;
 			$this->content = str_replace($mention[0], $el, $this->content);
 		}
 	}
@@ -87,7 +102,9 @@ class MessageParser
 		preg_match_all("/&lt;#(\d{18})&gt;/", $this->content, $mentions, PREG_SET_ORDER);
 		foreach($mentions as $mention) {
 			try {
-				$channel = $this->client->getChannel($mention[1]);
+				$channel = $this->client->channel->getChannel([
+				    'channel.id' => $mention[1]
+                ]);
 			} catch (CommandClientException $e) {
 				if($e->getResponse()->getStatusCode() === 404) {
 					$channel = new stdClass();
@@ -111,16 +128,16 @@ class MessageParser
 	{
 		preg_match_all("/&lt;@&(\d{18})&gt;/", $this->content, $mentions, PREG_SET_ORDER);
 		foreach($mentions as $mention) {
-			try {
-				$role = $this->client->getRole($mention[1]);
-			} catch (InvalidArgumentException $e) {
-				if ($e->getCode() === 404) {
-					$role = new stdClass();
-					$role->name = 'deleted-role';
-				} else {
-					throw $e;
-				}
-			}
+            $roles = $this->client->guild->getGuildRoles([
+                'guild.id' => $this->guildId
+            ]);
+            $role = new stdClass();
+            $role->name = 'deleted-role';
+            foreach ($roles as $guildRole) {
+                if ($guildRole->id == $mention[1]) {
+                    $role = $guildRole;
+                }
+            }
 			$el = Html::el('a');
 			$el->class = 'btn btn-link mention';
 			$el[] = "#{$role->name}";		
@@ -164,7 +181,7 @@ class MessageParser
                     }
                     $this->content = implode(self::NEW_LINE, $lines);
                 } else {
-                    $this->content = preg_replace($regex, $replace, $this->content);
+                    $this->content = (string) preg_replace($regex, $replace, $this->content);
                 }
             }
 		}

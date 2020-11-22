@@ -10,12 +10,26 @@ use RestCord\DiscordClient;
  */
 class ClientFactory
 {
+    /**
+     * @var string
+     */
 	private string $token;
+    /**
+     * @var Logger
+     */
 	private Logger $logger;
+    /**
+     * @var bool
+     */
 	private bool $throwOnRatelimit;
+    /**
+     * @var string
+     */
 	private string $apiUrl;
+    /**
+     * @var string
+     */
 	private string $tokenType;
-	private int $guild;
 
 
 	/**
@@ -26,15 +40,13 @@ class ClientFactory
 	 * @param boolean $throwOnRatelimit
 	 * @param string $apiUrl
 	 * @param string $tokenType
-	 * @param int $guild
 	 */
-	public function __construct(string $token, Logger $logger, bool $throwOnRatelimit, string $apiUrl, string $tokenType, int $guild) {
+	public function __construct(string $token, Logger $logger, bool $throwOnRatelimit, string $apiUrl, string $tokenType) {
 		$this->token = $token;
 		$this->logger = $logger;
 		$this->throwOnRatelimit = $throwOnRatelimit;
 		$this->apiUrl = $apiUrl;
 		$this->tokenType = $tokenType;
-		$this->guild = $guild;
 	}
 
     /**
@@ -42,19 +54,16 @@ class ClientFactory
      *
      * @param string|null $token
      * @param string|null $tokenType
-     * @return Client
+     * @return DiscordClient
      */
-	public function create(?string $token = null, ?string $tokenType = null): Client
+	public function create(?string $token = null, ?string $tokenType = null): DiscordClient
 	{
-		return new Client(
-			new DiscordClient([
+		return new DiscordClient([
             'token' => $token ?: $this->token,
             'logger' => $this->logger,
             'throwOnRatelimit' => $this->throwOnRatelimit,
             'apiUrl' => $this->apiUrl,
             'tokenType' => $tokenType ?: $this->tokenType,
-			]),
-			$this->guild
-		);
+			]);
 	}
 }
