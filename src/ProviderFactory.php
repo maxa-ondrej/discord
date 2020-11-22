@@ -8,8 +8,18 @@ namespace Majksa\Discord;
  */
 class ProviderFactory
 {
-	private int $clientId;
-	private string $clientSecret;
+    /**
+     * @var int
+     */
+	protected int $clientId;
+    /**
+     * @var string
+     */
+    protected string $clientSecret;
+    /**
+     * @var string
+     */
+    protected string $apiUrl;
 
     /**
      * Factory constructor
@@ -17,9 +27,10 @@ class ProviderFactory
      * @param int $clientId
      * @param string $clientSecret
      */
-	public function __construct(int $clientId, string $clientSecret) {
+	public function __construct(int $clientId, string $clientSecret, string $apiUrl) {
 		$this->clientId = $clientId;
 		$this->clientSecret = $clientSecret;
+		$this->apiUrl = $apiUrl;
 	}
 
 	/**
@@ -33,6 +44,7 @@ class ProviderFactory
 		return new Provider([
 			'clientId' => $this->clientId,
 			'clientSecret' => $this->clientSecret,
+			'apiUrl' => $this->apiUrl,
 			'redirectUri' => $redirectUri,
 		]);
 	}

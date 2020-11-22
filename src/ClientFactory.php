@@ -37,14 +37,14 @@ class ClientFactory
 		$this->guild = $guild;
 	}
 
-	/**
-	 * Creates new DiscordClient.
-	 *
-	 * @param string $token
-	 * @param string $tokenType
-	 * @return Client
-	 */
-	public function create(string $token = null, string $tokenType = null): Client
+    /**
+     * Creates new DiscordClient.
+     *
+     * @param string|null $token
+     * @param string|null $tokenType
+     * @return Client
+     */
+	public function create(?string $token = null, ?string $tokenType = null): Client
 	{
 		return new Client(
 			new DiscordClient([

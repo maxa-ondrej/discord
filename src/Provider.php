@@ -2,13 +2,9 @@
 
 namespace Majksa\Discord;
 
-use Discord\OAuth\Discord;
-use Discord\OAuth\DiscordRequestException;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
+use HttpRequestException;
 use League\OAuth2\Client\Provider\GenericProvider;
-use League\OAuth2\Client\Token\AccessToken;
-use Psr\Http\Message\ResponseInterface;
 
 
 /**
@@ -16,6 +12,22 @@ use Psr\Http\Message\ResponseInterface;
  */
 class Provider extends GenericProvider
 {
+
+    /**
+     * @var string
+     */
+    protected string $revokeTokenUrl;
+
+    public function __construct(array $options = [], array $collaborators = [])
+    {
+        parent::__construct($options + [
+            'urlAuthorize' => $options['apiUrl'] . '/oauth2/authorize',
+            'urlAccessToken' => $options['apiUrl'] . '/oauth2/token',
+            'urlResourceOwnerDetails' => $options['apiUrl'] . '/users/@me',
+        ], $collaborators);
+        $this->revokeTokenUrl = $options['apiUrl'] . '/oauth2/token/revoke';
+    }
+
     /**
      * Gets url for revoking access token.
      *
@@ -23,20 +35,19 @@ class Provider extends GenericProvider
      */
     public function getRevokeTokenUrl(): string
     {
-        return $this->getBaseAccessTokenUrl([]) . '/revoke';
+        return $this->revokeTokenUrl;
     }
 
     /**
      * Revokes token
      *
      * @param string $token
-     * @return void
-     * @throws DiscordRequestException
+     * @throws HttpRequestException
      */
     public function revokeToken(string $token): void
     {
         $client = new Client; 
-        $response = $client->post($this->getRevokeTokenUrl(), [
+        $response = $client->post($this->revokeTokenUrl, [
             'form_params' => [
                 'client_id' => $this->clientId,
                 'client_secret' => $this->clientSecret,
@@ -45,7 +56,7 @@ class Provider extends GenericProvider
         ]);
         if ($response->getStatusCode() !== 200) {
             $data = json_decode($response->getBody(), true);
-            throw new DiscordRequestException("Error in response from Discord: $data[error]");
+            throw new HttpRequestException("Error in response from Discord: $data[error]");
         }
     }
 

@@ -9,12 +9,17 @@ use Nette\DI\CompilerExtension;
 use Nette\Schema\Schema;
 
 use Majksa\Discord\ProviderFactory;
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
-use RestCord\DiscordClient;
 
+/**
+ * Class DiscordExtension
+ */
 class DiscordExtension extends CompilerExtension
 {
+    /**
+     * Creates schema for configuration.
+     *
+     * @return Schema
+     */
 	public function getConfigSchema(): Schema
 	{
 		return Expect::structure([
@@ -31,13 +36,17 @@ class DiscordExtension extends CompilerExtension
 		]);
 	}
 
+    /**
+     * Loads configuration from config file.
+     */
 	public function loadConfiguration()
 	{
 		$builder = $this->getContainerBuilder();
 		$builder->addDefinition($this->prefix('providerFactory'))
 			->setFactory(ProviderFactory::class, [
-				'clientId' => $this->config->client->id,
-				'clientSecret' => $this->config->client->secret
+				$this->config->client->id,
+				$this->config->client->secret,
+                $this->config->apiUrl,
 		]);
 		$builder->addDefinition($this->prefix('clientFactory'))
 			->setFactory(ClientFactory::class, [
