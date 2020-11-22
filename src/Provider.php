@@ -3,8 +3,8 @@
 namespace Majksa\Discord;
 
 use GuzzleHttp\Client;
-use HttpRequestException;
 use League\OAuth2\Client\Provider\GenericProvider;
+use Majksa\Discord\Exception\TokenRevokeException;
 
 
 /**
@@ -42,7 +42,7 @@ class Provider extends GenericProvider
      * Revokes token
      *
      * @param string $token
-     * @throws HttpRequestException
+     * @throws TokenRevokeException
      */
     public function revokeToken(string $token): void
     {
@@ -56,7 +56,7 @@ class Provider extends GenericProvider
         ]);
         if ($response->getStatusCode() !== 200) {
             $data = json_decode($response->getBody(), true);
-            throw new HttpRequestException("Error in response from Discord: $data[error]");
+            throw new TokenRevokeException($data['error']);
         }
     }
 
