@@ -24,6 +24,8 @@ class Provider extends GenericProvider
             'urlAuthorize' => $options['apiUrl'] . '/oauth2/authorize',
             'urlAccessToken' => $options['apiUrl'] . '/oauth2/token',
             'urlResourceOwnerDetails' => $options['apiUrl'] . '/users/@me',
+            'scopes' => ['identify', 'email', 'guilds'],
+            'scopeSeparator' => ' '
         ], $collaborators);
         $this->revokeTokenUrl = $options['apiUrl'] . '/oauth2/token/revoke';
     }
@@ -58,13 +60,5 @@ class Provider extends GenericProvider
             $data = json_decode($response->getBody(), true);
             throw new TokenRevokeException($data['error']);
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDefaultScopes()
-    {
-        return ['identify', 'email', 'guilds'];
     }
 }
